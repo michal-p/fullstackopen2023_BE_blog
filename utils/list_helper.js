@@ -1,3 +1,6 @@
+// Load the full build.
+var _ = require('lodash')
+
 const dummy = (blogs) => {
   console.log(blogs)
   return 1
@@ -20,8 +23,22 @@ const favoriteBlog = (blogs) => {
   }, {})
 }
 
+const mostBlogs = (blogsList) => {
+  if (blogsList.length === 0) return { author: null, blogs: 0 }
+
+  const biggestWriters = _.countBy(blogsList, 'author' )
+  const biggestValue = _.max(Object.values(biggestWriters))
+  const biggestAuthor = _.findKey(biggestWriters, (value) => value === biggestValue)
+
+  return {
+    author: biggestAuthor,
+    blogs: biggestValue
+  }
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  authorWithTheMostBlogs: mostBlogs
 }
