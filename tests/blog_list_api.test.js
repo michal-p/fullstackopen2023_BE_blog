@@ -15,6 +15,10 @@ beforeEach(async () => {
   await Promise.all(promiseArray)
 })
 
+afterAll(async () => {
+  await mongoose.connection.close()
+})
+
 test('notes are returned as json', async () => {
   console.log('entered test')
   await api
@@ -25,10 +29,12 @@ test('notes are returned as json', async () => {
 
 test('all notes are returned', async () => {
   const response = await api.get('/api/blogs')
-
   expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
-afterAll(async () => {
-  await mongoose.connection.close()
+test('test_unique_identifier_property', async () => {
+  const response = await api.get('/api/blogs/')
+  console.log('response: ', response)
+
+  expect(response.body[0].id).toBeDefined()
 })
