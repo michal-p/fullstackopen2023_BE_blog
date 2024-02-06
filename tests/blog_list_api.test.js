@@ -38,3 +38,23 @@ test('test_unique_identifier_property', async () => {
 
   expect(response.body[0].id).toBeDefined()
 })
+
+test('should successfully creates a new blog post', async () => {
+  const newBlogPost = {
+    title: 'Aaaaaa',
+    author: 'Edsgerrrrrr WWWWW. Dijkstraaaaa',
+    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+    likes: 0
+  }
+
+  await api.post('/api/blogs/')
+    .send(newBlogPost)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+  const lastBlogPostInDB = blogsAtEnd[blogsAtEnd.length - 1]
+  expect(lastBlogPostInDB).toMatchObject(newBlogPost)
+})
