@@ -39,12 +39,31 @@ test('test_unique_identifier_property', async () => {
   expect(response.body[0].id).toBeDefined()
 })
 
-test('should successfully creates a new blog post', async () => {
+test('create a new blog post with all fields filled', async () => {
+  const newBlogPost = {
+    title: 'New Blog Post',
+    author: 'John Doe',
+    url: 'http://www.example.com',
+    likes: 10
+  }
+
+  await api.post('/api/blogs')
+    .send(newBlogPost)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+  const lastBlogPostInDB = blogsAtEnd[blogsAtEnd.length - 1]
+  expect(lastBlogPostInDB).toMatchObject(newBlogPost)
+})
+
+test.only('should test default likes value', async () => {
   const newBlogPost = {
     title: 'Aaaaaa',
     author: 'Edsgerrrrrr WWWWW. Dijkstraaaaa',
-    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-    likes: 0
+    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html'
   }
 
   await api.post('/api/blogs/')
@@ -56,5 +75,5 @@ test('should successfully creates a new blog post', async () => {
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
   const lastBlogPostInDB = blogsAtEnd[blogsAtEnd.length - 1]
-  expect(lastBlogPostInDB).toMatchObject(newBlogPost)
+  expect(lastBlogPostInDB.likes).toBe(0)
 })
