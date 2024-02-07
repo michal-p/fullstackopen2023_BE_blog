@@ -34,7 +34,6 @@ test('all notes are returned', async () => {
 
 test('test_unique_identifier_property', async () => {
   const response = await api.get('/api/blogs/')
-  console.log('response: ', response)
 
   expect(response.body[0].id).toBeDefined()
 })
@@ -59,7 +58,7 @@ test('create a new blog post with all fields filled', async () => {
   expect(lastBlogPostInDB).toMatchObject(newBlogPost)
 })
 
-test.only('should test default likes value', async () => {
+test('should test default likes value', async () => {
   const newBlogPost = {
     title: 'Aaaaaa',
     author: 'Edsgerrrrrr WWWWW. Dijkstraaaaa',
@@ -76,4 +75,15 @@ test.only('should test default likes value', async () => {
 
   const lastBlogPostInDB = blogsAtEnd[blogsAtEnd.length - 1]
   expect(lastBlogPostInDB.likes).toBe(0)
+})
+
+test('test_create_blog_missing_properties', async () => {
+  const newBlogPost = {
+    author: 'John Doe',
+    likes: 10
+  }
+
+  await api.post('/api/blogs')
+    .send(newBlogPost)
+    .expect(400)
 })
