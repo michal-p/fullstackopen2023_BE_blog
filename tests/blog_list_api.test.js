@@ -108,3 +108,20 @@ describe('deletion of a blog', () => {
     expect(titles).not.toContain(blogToDelete.title)
   })
 })
+
+describe('update of a blog', () => {
+  test('should update blog likes and return updated blog as JSON', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+    const updatedLikes = 333
+
+    await api.put(`/api/blogs/${blogToUpdate.id}`)
+      .send({ 'likes': updatedLikes })
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const updatedBlog = await Blog.findById(blogToUpdate.id)
+
+    expect(updatedBlog.likes).toBe(updatedLikes)
+  })
+})
