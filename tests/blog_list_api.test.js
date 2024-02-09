@@ -114,7 +114,6 @@ describe('update of a blog', () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToUpdate = blogsAtStart[0]
     const updatedLikes = 333
-    console.log('updatedLikes :', updatedLikes);
 
     await api.put(`/api/blogs/${blogToUpdate.id}`)
       .send({ 'likes': updatedLikes })
