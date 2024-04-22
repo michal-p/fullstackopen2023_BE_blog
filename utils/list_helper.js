@@ -10,6 +10,12 @@ const totalLikes = (blogs) => {
   }, 0)
 }
 
+/**
+ * Finds the favorite blog from a list of blogs.
+ *
+ * @param {Array} blogs - The list of blogs to search from.
+ * @returns {Object|null} - The favorite blog object containing title, author, and likes, or null if the list is empty.
+ */
 const favoriteBlog = (blogs) => {
   if (blogs.length === 0) return null
 
