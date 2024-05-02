@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 const app = require('../app')
 const api = supertest(app)
 
-const helper = require('./blog_list_api_helper')
+const helper = require('./api_helper')
 
 const Blog = require('../models/blog')
 describe('When there is initially some notes saved', () => {
@@ -50,7 +50,7 @@ describe('When there is initially some notes saved', () => {
     })
 
     test('fails with statuscode 404 if blog does not exist.', async () => {
-      const validNonexistingId = await helper.nonExistingId()
+      const validNonexistingId = await helper.nonExistingBlogId()
 
       await api
         .get(`/api/blogs/${validNonexistingId}`)
