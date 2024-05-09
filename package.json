@@ -8,7 +8,8 @@
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "dev:debug": "cross-env NODE_ENV=development nodemon --inspect index.js",
     "lint": "eslint .",
-    "test": "cross-env NODE_ENV=test node --test"
+    "test": "cross-env NODE_ENV=test node --test",
+    "test:sequentially": "npm run test -- --test-concurrency=1"
   },
   "author": "Michal Puchy",
   "license": "MIT",

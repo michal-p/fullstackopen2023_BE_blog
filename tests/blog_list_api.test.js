@@ -4,15 +4,29 @@ const supertest = require('supertest')
 const mongoose = require('mongoose')
 const app = require('../app')
 const api = supertest(app)
+const bcrypt = require('bcrypt')
 
-const helper = require('./api_helper')
+const helper = require('./test_helper')
 
 const Blog = require('../models/blog')
-describe('When there is initially some notes saved', () => {
+const User = require('../models/user')
+
+describe('When there is initially some blogs saved', () => {
+  let rootUser // Declare a global variable to hold the user
 
   beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
+
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash(process.env.TEST_ROOT_USER_PASSWORD, 10)
+    const user = new User({ username: process.env.TEST_ROOT_USER_USERNAME, passwordHash })
+
+    await user.save()
+
+    // Find the user in the database and assign it to the global variable
+    rootUser = await helper.rootUserInDb()
   })
 
   test('content type of blogs are returned as json.', async () => {
@@ -22,7 +36,7 @@ describe('When there is initially some notes saved', () => {
       .expect('Content-Type', /application\/json/)
   })
 
-  test('of count all blogs are returned', async () => {
+  test('count of all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
 
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
@@ -69,11 +83,13 @@ describe('When there is initially some notes saved', () => {
   describe('Create a new blog', () => {
 
     test('with all fields filled.', async () => {
+
       const newBlog = {
         title: 'New Blog Post',
         author: 'John Doe',
         url: 'http://www.example.com',
-        likes: 10
+        likes: 10,
+        userId: rootUser.id
       }
 
       const response = await api.post('/api/blogs')
@@ -85,14 +101,17 @@ describe('When there is initially some notes saved', () => {
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
       const createdBlog = blogsAtEnd.find(blog => blog.id === response.body.id)
-      assert.deepStrictEqual({ title: createdBlog.title, author: createdBlog.author, url: createdBlog.url, likes: createdBlog.likes }, newBlog)
+      const { title, author, url, likes } = createdBlog
+      assert.deepStrictEqual({ title, author, url, likes, userId: createdBlog.user._id.toString() }, newBlog)
     })
 
     test('without likes, expect default value.', async () => {
+
       const newBlog = {
         title: 'Aaaaaa',
         author: 'Edsgerrrrrr WWWWW. Dijkstraaaaa',
-        url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html'
+        url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+        userId: rootUser.id
       }
 
       await api.post('/api/blogs/')
@@ -109,9 +128,11 @@ describe('When there is initially some notes saved', () => {
     })
 
     test('with missing properties title and url.', async () => {
+
       const newBlog = {
         author: 'John Doe',
-        likes: 10
+        likes: 10,
+        userId: rootUser.id
       }
 
       await api.post('/api/blogs')
@@ -123,10 +144,12 @@ describe('When there is initially some notes saved', () => {
     })
 
     test('with missing property title.', async () => {
+
       const newBlog = {
         url: 'https://reactpatterns.com/',
         author: 'John Doe',
-        likes: 10
+        likes: 10,
+        userId: rootUser.id
       }
 
       await api.post('/api/blogs')
@@ -141,7 +164,8 @@ describe('When there is initially some notes saved', () => {
       const newBlog = {
         title: 'Maria',
         author: 'John Doe',
-        likes: 10
+        likes: 10,
+        userId: rootUser.id
       }
 
       await api.post('/api/blogs')
