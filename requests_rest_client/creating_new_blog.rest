@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "VS code rest client is pretty good 4",
+  "title": "Nova titul od root usera3.",
   "author": "John Smith4",
-  "url": "https://johnsmith4.com",
-  "likes": 6
+  "url": "https://root.com",
+  "likes": 2,
+  "userId": "66325c260a0b506c8eba8470"
 }

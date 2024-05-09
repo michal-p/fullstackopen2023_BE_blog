@@ -38,9 +38,18 @@ const usersInDb = async () => {
   return users.map(u => u.toJSON())
 }
 
+const rootUserInDb = async () => {
+  const rootUser = await User.findOne({ username: process.env.TEST_ROOT_USER_USERNAME })
+
+  if (!rootUser) throw new Error('Root user not found in the database')
+
+  return rootUser.toJSON()
+}
+
 module.exports = {
   initialBlogs,
   blogsInDb,
   nonExistingBlogId,
-  usersInDb
+  usersInDb,
+  rootUserInDb
 }

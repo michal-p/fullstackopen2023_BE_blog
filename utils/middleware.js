@@ -13,17 +13,25 @@ const unknownEndpoint = (request, response) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-  logger.error(error.message)
+  logger.error(error.stack) //! this log problem for developer on server console
 
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
-  } else if (error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')) {
-    return response.status(400).json({ error: 'expected `username` to be unique' })
+  //! this part is shown to user of our website
+  switch (error.name) {
+    case 'CastError':
+      return response.status(400).send({ error: 'malformatted id' })
+    case 'ValidationError':
+      return response.status(400).json({ error: error.message })
+    case 'MongoServerError':
+      if (error.message.includes('E11000 duplicate key error')) {
+        return response.status(400).json({ error: 'expected `username` to be unique' })
+      }
+      break
+    case 'StrictPopulateError':
+      return response.status(500).json({ error: 'Internal server error.' })
+    default:
+      next(error)
   }
 
-  next(error)
 }
 
 module.exports = {
