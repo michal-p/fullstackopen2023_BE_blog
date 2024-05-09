@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken')
+
 const isStrongPassword = (password) => {
   const lowercaseRegex = /[a-z]/
   const uppercaseRegex = /[A-Z]/
@@ -28,6 +30,21 @@ const isStrongPassword = (password) => {
   }
 }
 
+const createToken = (user) => {
+  const userForToken = {
+    username: user.username,
+    id: user.id
+  }
+  const token = jwt.sign(
+    userForToken,
+    process.env.SECRET,
+    { expiresIn: 60 * 60 }// token expires in 60*60 seconds, that is, in one hour
+  )
+
+  return token
+}
+
 module.exports = {
-  isStrongPassword
+  isStrongPassword,
+  createToken
 }
