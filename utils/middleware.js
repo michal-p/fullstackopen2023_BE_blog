@@ -28,14 +28,29 @@ const errorHandler = (error, request, response, next) => {
       break
     case 'StrictPopulateError':
       return response.status(500).json({ error: 'Internal server error.' })
+    case 'JsonWebTokenError':
+      return response.status(401).json({ error: 'token invalid' })
+    case 'TokenExpiredError':
+      return response.status(401).json({ error: 'token expired' })
     default:
       next(error)
   }
 
 }
 
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get('authorization')
+  const bearer = 'Bearer '
+  if (authorization && authorization.startsWith(bearer)) {
+    request.token = authorization.replace(bearer, '')
+  }
+
+  next()
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  tokenExtractor
 }

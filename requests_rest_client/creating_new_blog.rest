@@ -1,8 +1,9 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY2MzI1YzI2MGEwYjUwNmM4ZWJhODQ3MCIsImlhdCI6MTcxNTI3MjgzNCwiZXhwIjoxNzE1Mjc2NDM0fQ.9PnuS5pInUf7gNSbCBJcoR89PDu7wimKfcSkVTcqD-4
 
 {
-  "title": "Nova titul od root usera3.",
+  "title": "New title from root user 5.",
   "author": "John Smith4",
   "url": "https://root.com",
   "likes": 2,
