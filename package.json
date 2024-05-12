@@ -7,6 +7,7 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "dev:debug": "cross-env NODE_ENV=development nodemon --inspect index.js",
+    "dev:appmap": "npx appmap-node npm run dev",
     "lint": "eslint .",
     "test": "cross-env NODE_ENV=test node --test",
     "test:sequentially": "npm run test -- --test-concurrency=1"
