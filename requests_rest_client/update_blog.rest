@@ -2,5 +2,6 @@ PUT http://localhost:3003/api/blogs/5a422a851b54a676234d17f7
 content-type: application/json
 
 {
-    "likes": 111987
+    "url": "www.majo.js",
+    "wrongproperty": "hack"
 }
