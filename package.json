@@ -10,7 +10,7 @@
     "dev:appmap": "npx appmap-node npm run dev",
     "lint": "eslint .",
     "test": "cross-env NODE_ENV=test node --test",
-    "test:sequentially": "npm run test -- --test-concurrency=1"
+    "test:seq": "npm run test -- --test-concurrency=1"
   },
   "author": "Michal Puchy",
   "license": "MIT",
