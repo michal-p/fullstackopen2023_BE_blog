@@ -3,5 +3,5 @@ Content-Type: application/json
 
 {
   "username": "michal",
-  "password": "salainenQ$1"
+  "password": "{{$dotenv TEST_ROOT_USER_PASSWORD}}"
 }
