@@ -21,13 +21,12 @@ blogsRouter.get('/:id', async (request, response) => {
 
 blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const body = request.body
-   // get user from request object
   const user = request.user
 
   if (!user) {
     return response.status(404).end()
   }
-  const blog = new Blog({
+  const blogObject = new Blog({
     title: body.title,
     author: body.author || '',
     url: body.url,
@@ -35,38 +34,37 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     user: user._id //* Is it possible to use also user.id, does not matter in this case
   })
 
-  const savedBlog = await blog.save()
-  user.blogs = user.blogs.concat(savedBlog._id)
+  const savedBlog = await blogObject.save()
+  const createdBlog = await Blog.findById(savedBlog.id).populate('user', { username: 1, name: 1 })
+  user.blogs = user.blogs.concat(createdBlog._id)
   await user.save()
 
-  response.status(201).json(savedBlog)
+  response.status(201).json(createdBlog)
 })
 
 blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
-  const blog = await Blog.findById(request.params.id)
-  if (!blog) {
-    return response.status(404).json({ error: 'blog has not been found' })
-  }
-
-  // get user from request object
   const user = request.user
 
   if (!user) {
-    return response.status(404).end()
+    return response.status(404).json({ error: 'user has not been found' })
   }
 
+  const blog = await Blog.findById(request.params.id)
 
+  if (!blog) {
+    return response.status(404).json({ error: 'blog has not been found' })
+  }
   if (blog.user.toString() !== user._id.toString()) {
-    return response.status(403).json({ error: 'blog does not belong to user' })
+    return response.status(403).json({ error: 'forbidden: blog does not belong to user' })
   }
 
-  await Blog.deleteOne(blog)
+  await Blog.deleteOne({ _id: request.params.id })
   response.status(204).end()
 })
 
 blogsRouter.put('/:id', async (request, response) => {
   const body = request.body
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, body, { new: true })
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, body, { new: true }).populate('user', { username: 1, name: 1 })
 
   response.status(200).json(updatedBlog)
 })
