@@ -24,7 +24,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const user = request.user
 
   if (!user) {
-    return response.status(404).end()
+    return response.status(404).json({ error: 'user not exist' })
   }
   const blogObject = new Blog({
     title: body.title,
